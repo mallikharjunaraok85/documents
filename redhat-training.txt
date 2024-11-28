@@ -1,0 +1,2153 @@
+
+1.File System Hierarchy
+
+root
+bin,boot,dev,etc,home,root,run,sbin,tmp,usr,var,opt
+
+Static content
+dynamic or variable content
+persistent content
+runtime content
+
+
+2.Absolute paths  --with /
+
+3.Relative Paths  -- without /
+
+4.Navigating Paths  with pwd and cd commands
+
+.. --> move up one level to the parent dir
+.   --> represents current dir
+
+5.Command-line file management
+
+mkdir,cp,cp -r,mv,rm,rm -r , rmdir , vi ,pwd, ls -l , ls, head, tail, sort, grep, cat , more , less, 
+
+6.Managing Links between files
+
+Hard links
+Soft links
+and differences
+
+# ln source desti
+# ls -il  --> to display hard link files
+
+7. Command Line expansions
+   pattern patching
+   *,?, [abc]
+
+8. Tilde Expansion
+   ~
+
+9. Brace Expansion
+  {m..p} --> m,n,o,p
+
+10. Variable Expansion
+
+ USERNAME=operator
+ echo $USERNAME
+
+echo ${USERNAME}
+
+11. Command Substitution
+
+$(command)
+echo Today is $(date +%A).
+
+echo "Todat date is: $(date)"
+
+
+Protecting Arguments from Expansion
+The backslash (\) is an escape character in the Bash shell. It will protect the character immediately
+following it from expansion
+
+echo "today date\*."
+
+touch mystery_chapter{1..8}.odf
+ mkdir -p Videos/season{1..2}
+
+
+======================================================================
+
+Date: 24th-Oct-2024
+
+1. STANDARD INPUT, STANDARD OUTPUT, AND STANDARD ERROR
+file descriptors : 0 , 1, 2
+/dev/null  --> file
+
+> file 
+>> file
+2>> file
+2> /dev/null
+
+>file &2>&1
+&>file
+
+>>file 2>&1
+&>>file
+
+
+2. CONSTRUCTING PIPELINES
+
+|   # ls -l |wc -l
+    #  ls -t | head -n 10 > /tmp/ten-last-changed-files
+tee command
+
+    # ls -l | tee /tmp/saved-output | less
+
+3. USING SHELL VARIABLES
+ # set |less
+ # echo $date
+
+ # file1=/tmp/tmp.z9pXW0HqcC
+ # ls -l $file1
+
+ EDITOR = vim
+export  EDITOR=vim
+
+echo $PATH
+
+
+3. UNSETTING AND UNEXPORTING VARIABLES
+
+ # unset $file
+ # export -n PS1
+
+4. DESCRIBING USER AND GROUP CONCEPTS
+   superuser, system users, and regular users
+   id 
+   /etc/passwd  --> seven fields  name/passwd/uid/gid/comments/home dir/shell
+
+   what is group ?
+   /etc/group  --> 4 fileds    name/passwd/gid/list of users
+
+5. GAINING SUPERUSER ACCESS
+   grant other users superuser access through the sudo command.
+  # sudo 
+
+6. SWITCHING USERS
+   # su 
+   # su - 
+   # su - arjun
+
+   If you omit the user name, the su or su - command attempts to switch to root by default
+
+7. RUNNING COMMANDS WITH SUDO
+
+ # sudo -i
+ # sudo su -
+ # sudo -s 
+
+8. Configuring Sudo
+
+   /etc/sudoers
+%wheel ALL=(ALL) ALL
+
+e /etc/sudoers.d   sudo access for users and groups
+
+user01 ALL=(ALL) ALL
+
+%group01 ALL=(ALL) ALL
+
+
+ansible ALL=(ALL) NOPASSWD:ALL
+
+9. MANAGING LOCAL USERS
+
+ useradd, userdmod , userdel
+/etc/login.defs
+
+UID 0
+UID 1-999
+UID >1000 + 
+
+===================================================
+
+25th-Oct-2024
+
+User Administration:
+--------------------
+Creating users from command line
+# useradd
+# useradd --help
+
+  -c, --comment --> comment
+  -g, --gid group --> primary group
+  -G  --groups groups  --> comma-separated list of secondary groups
+  -a  --append     --> used with -G to append
+  -d  --home home_dir  --> user home directory
+  -m  --move-home  --> Move the users home dir to new location, must be used with -d
+  -s  --shell shell  --> login shell
+  -L  --lock  --> lock the user account
+  -U  --unlock  --> unlock the user account
+
+
+2. Deleting users from the CommandLine
+   # userdel  username
+   
+ -r --> removes the details of username from /etc/passwd and deletes the users home directory
+
+# find / -nouser -o -nogroup 
+
+3. Setting Passwords from CommandLine
+
+# passwd <username>
+
+UID Ranges:
+
+UID 0 --> Superuser , root
+UID 1-200 --> System users assigned statically to system processes by Redhat
+UID 201-999 --> used by system processes do not own files on the fs. dynamically assigned
+UID 1000+  --> Regular users
+
+# usermod 
+
+ -c --> to change the comment
+
+2. Local Group Accounts
+
+# groupadd
+ 
+-g --> to specify GID
+-r --> to create system group using GID from the range
+
+# groupmod --> to change the properties of existing group
+ 
+-n to specify new name
+-g to specify new GID
+
+# sudo groupmod -n group0022 group02
+
+# sudo usermod -aG group01 user03
+ 
+# groupdel  --> to delete groups
+
+# /etc/group
+
+
+3. Managing User Password:
+
+# /etc/shadow
+
+1.username
+2. encrypted passwd
+3. the day passwd was last changed
+4. min num of days to elapse since last passwd change before change it again
+5. Maximum num days pass 
+6. Warning Period
+7. Inactivity Period
+8. The Day on which passwd expires
+9. empty filed
+
+
+Configuring Password Aging
+
+Last change date (-d)
+min days (-m)
+max days (-M )
+warn days (-W)
+inactive days (-I)
+
+# sudo chage -m 0 -M 90 -W 7 -I 14 user03
+
+-l display passwd aging details
+
+-E to set expiration date
+
+# usermod -L user03
+
+# usermod -L -e 2019-10-05 user03
+
+# usermod -U  --> unlock the user
+
+The nologin Shell
+
+# chage -d 0 user03
+
+# date -d "+180 days" +%F
+# change -E 2019-07-24 user03
+# chage -l user03
+
+
+================================
+
+28th-Oct-2024
+
+1. Default File Permissions
+
+default system permissions
+Dir = 0777
+file = 0666
+
+# umask --> to remove per from all dir and file
+
+System default umask  
+/etc/profile
+/etc/bashrc
+
+User lelvel default Umask
+
+.bash_profile
+.bashrc
+
+/etc/profile.d/local-umask.sh
+
+
+2. Monitoring and Managing Linux Processes
+
+A process is a running instance of a launched, executable program.
+
+unique process id
+ process ID   PID
+ Parent Process ID  PPID
+
+Process States
+
+Running
+Sleeping
+Stopped
+Zombie
+
+# top
+# ps -ef
+# ps -elf
+
+3. RUNNING JOBS IN THE BACKGROUND
+
+ # sleep 10000 &
+ # jobs
+
+backgroud & Foreground
+
+# fg %1
+# bg %1
+
+4. KILLING PROCESSES
+
+# kill -l
+# kill -9 process id
+# killall  --> based on command 
+# pkill -U user/group| command |
+# pgrep -l -u username
+
+# pstree -p username
+# w 
+
+5. load average
+
+# uptime
+1,5,15
+
+# lscpu  --> to list cpus
+
+
+============================================================
+
+29th-Oct-2024
+
+INTRODUCTION TO systemd
+
+Systemd Daemon  --> startups linux , incl service startup & service management
+                     at boot time and on a running system
+
+
+Daemons are processes that either wait or run in the background, performing various tasks.
+Generally, daemons start automatically at boot time and continue to run until shutdown or until
+they are manually stopped.
+
+
+In Red Hat Enterprise Linux, the first process that starts (PID 1) is systemd.
+
+A few of the features provided by systemd include:
+1. • Parallelization capabilities s (starting multiple services simultaneously), which increase the boot
+speed of a system
+On-demand starting of daemons without requiring a separate service.
+
+1.  Parallelization
+2.  Automatic service dependency management,
+3.  Linux control groups
+
+
+systemd uses units to manage different types of objects
+
+1.   .service
+2.   .socket
+3.   .path
+
+# systemctl -t help 
+
+# systemctl list-units --type=service
+# systemctl list-units --type=service --all
+# systemctl
+# systemctl list-unit-files --type=service
+# systemctl status sshd.service
+  loaded
+  active
+  Main PID
+  Status 
+
+1. loaded
+2. active (Running)
+3. active ( exited )
+4. active ( waiting)
+5. inactive
+6. enabled
+7. disabled
+8. static
+
+# systemctl is-active sshd.service
+# systemctl is-enabled sshd.service
+#  systemctl is-failed sshd.service
+
+# systemctl start sshd.service
+# systemctl stop sshd.service
+# systemctl restart sshd.service
+# systemctl reload sshd.service
+# systemctl reload-or-restart sshd.service
+# systemctl stop cups.service
+
+systemctl list-dependencies UNIT
+# systemctl list-dependencies sshd.service
+
+
+# systemctl mask sendmail.service
+Created symlink /etc/systemd/system/sendmail.service → /dev/null
+
+# systemctl start sendmail.service
+Failed to start sendmail.service: Unit sendmail.service is masked.
+
+
+# systemctl unmask sendmail
+Removed /etc/systemd/system/sendmail.service.
+
+
+===========================================================
+
+30th-Oct-24
+
+WHAT IS OPENSSH?
+
+OpenSSH implements the Secure Shell or SSH protocol in the Red Hat Enterprise Linux systems
+
+SSH protocol enables systems to communicate in an encrypted and secure fashion over an
+insecure network.
+
+# ssh remotehost
+# exit
+
+ # ssh user02@remotehost
+#  ssh user02@remotehost hostname
+
+
+IDENTIFYING REMOTE USERS ?
+The w command displays a list of users currently logged into the computer.
+
+# w
+
+
+/etc/ssh/ssh_known_hosts
+~/.ssh/known_hosts
+
+putty
+
+SSH HOST KEYS:
+
+SSH KEY-BASED AUTHENTICATION
+
+You can configure an SSH server to allow you to authenticate without a password by using keybased authentication.
+ This is based on a private-public key scheme
+
+Generating SSH Keys
+
+$ ssh-keygen
+~/.ssh/id_rsa and
+~/.ssh/id_rsa.pub files
+
+
+$ ssh-keygen -f .ssh/key-with-pass
+
+ permission modes must be 600 on the private key and 644 on the public key.
+
+Sharing the Public Key:
+$ ssh-copy-id -i .ssh/key-with-pass.pub user@remotehost
+
+
+$ ssh -i .ssh/key-with-pass user@remotehost
+
+
+CONFIGURING THE OPENSSH SERVER:
+------------------------------
+sshd daemon
+# /etc/ssh/sshd_config.
+
+PROHIBIT THE SUPERUSER FROM LOGGING IN USING SSH
+
+ PermitRootLogin  yes/no
+
+# systemctl reload sshd
+
+PROHIBITING PASSWORD-BASED AUTHENTICATION FOR SSH
+
+PasswordAuthentication yes/no
+
+
+================================================================
+
+6th-Nov-2024
+
+ANALYZING AND STORING LOGS
+
+System logging
+ These logs are used to audit the system and troubleshoot problems.
+
+# /var/log
+
+# less 
+# tail
+
+systemd-journald
+rsyslog 
+
+By default, this journal is stored on a file system that does not persist across reboots
+
+rsyslog service reads syslog messages received by systemd-journald from
+the journal as they arrive. It then processes the syslog events, recording them to its log files or
+forwarding them to other services according to its own configuration.
+
+# /var/log/messages   ---> everything except security, authentication, mail , scheduled
+# /var/log/secure     ---> secure & authentication
+# /var/log/maillog    ---> related to mail server
+# /var/log/cron       ---> scheduled job
+# /var/log/boot.log   ---> non-syslog console messages related to system startup
+
+
+
+0 - emergency --> system is unusable
+1 - alert  --> Action must be taken immediatley
+2 - critical --> Critical condition
+3 - err   --> Non-Critical erro condition
+4 - warning ---> warning condition
+5 - notice  --> Normal but significant event
+6 - info  --> Informational event
+7 - debug  --> Debugging-level message
+
+# /etc/rsyslog.conf
+# /etc/rsyslog.d   ---> contains *.conf files
+
+ Each log message is categorized by a facility (the type of message) and a priority (the severity of the message).
+
+
+Log File Rotation:
+
+# logrotate
+
+How to verify log messages
+1. time stamp
+2. hostname
+3. program or process id
+4. actual message
+
+# tail -f /var/log/secure
+
+# journalctl -n 5
+# journalctl -f
+
+The journalctl command understands the debug, info, notice, warning, err, crit, alert, and emerg priority levels.
+
+# journalctl -p err
+
+--since and --until
+
+# journalctl --since today
+# journalctl --since "2019-02-10 20:30:00" --until "2019-02-13 12:00:00"
+# # journalctl --since "-1 hour"
+# journalctl -b
+
+# /run/log/journal
+
+ # /etc/systemd/journald.conf
+
+store system journals in a volatile manner or persistently across reboot.
+
+persistent, volatile, or auto
+
+auto: rsyslog determines whether to use persistent or volatile storage. If the /var/log/
+journal directory exists, then rsyslog uses persistent storage, otherwise it uses volatile
+storage
+
+
+
+
+
+Network Time Protocol (NTP)
+
+timedatectl command shows an overview of the current time-related system settings,
+including current time, time zone, and NTP synchronization settings of the system
+
+# timedatectl
+
+# timedatectl list-timezones   ---> A database of time zones is available and can be listed
+
+#  timedatectl set-timezone America/Phoenix
+
+# timedatectl set-time 9:00:00
+
+# timedatectl set-ntp true
+
+
+CONFIGURING AND MONITORING CHRONYD
+
+# /etc/chrony.conf 
+
+server classroom.example.com iburst
+
+#  systemctl restart chronyd
+# 
+ chrony sources
+
+
+============================================================================
+
+7-Nov-2024:
+----------
+
+TCP/IP NETWORK MODEL
+
+It's four-layered 
+
+RFC1122  
+
+Application   ---> ssh/https,NFS,CIFS,SMTP
+Transport     ---> TCP and UDP    /etc/services
+Internet    ---> The Internet, or network layer, carries data from the source host to the destination host
+Link      ---> The link, or media access, layer provides the connection to physical media ( wired Ethernet (802.3) and wireless WLAN (802.11).)
+
+
+Red Hat Enterprise Linux used names like eth0, eth1, and eth2
+
+
+Newer versions of Red Hat Enterprise Linux use a different naming system. Instead of being based
+on detection order, the names of network interfaces are assigned based on information from the
+firmware, the PCI bus topology, and type of network device
+
+ Ethernet interfaces begin with en
+
+
+The rest of the interface name after the type will be based on information provided by the server's
+firmware or determined by the location of the device in the PCI topology.
+
+• oN indicates that this is an on-board device and the server's firmware provided index number
+N for the device. So eno1 is on-board Ethernet device 1. Many servers will not provide this
+information.
+
+• sN indicates that this device is in PCI hotplug slot N. So ens3 is an Ethernet card in PCI hotplug
+slot 3.
+
+
+
+IPv4 Addresses:
+--------------
+
+An IPv4 address is a 32-bit number, normally expressed in decimal as four 8-bit octets ranging in
+value from 0 to 255, separated by dots. 
+
+The address is divided into two parts: the network part and the host part.
+
+network part identifies the subnet
+host part identifies a particular host on a subnet
+
+administrator must know the netmask
+which is assigned to the subnet
+
+The netmask indicates how many bits of the IPv4 address belong
+to the subnet. The more bits available for the host part, the more hosts can be on the subnet
+
+The special address 127.0.0.1 always points to the local system (“localhost”), and the network
+127.0.0.0/8 belongs to the local system, so that it can talk to itself using network protocols.
+
+A server can automatically configure its IPv4 network settings at boot time from a DHCP server
+
+As an alternative, you can configure a server to use a static network configuration. In this case,
+network settings are read from local configuration files. You must get the correct settings from
+your network administrator and update them manually as needed to avoid conflicts with other
+servers.
+
+
+HOST NAMES AND IP ADDRESSES
+
+Linux has a number of mechanisms to map a host name to an IP address, collectively called
+name resolution.
+
+One way is to set a static entry for each name in the /etc/hosts file on each system
+
+Domain Name System (DNS).
+
+. This is typically configured through DHCP or a static setting in a file called /etc/resolv.conf.
+
+VALIDATING NETWORK
+CONFIGURATION
+
+received (RX) and transmitted (TX) packets,
+
+# ip link show   --> identify n/w interfaces
+# ip addr show ens3
+# ip -s link show ens3   --> performance statistics 
+
+# ping --> connectivity
+# ping -c5 10.x.x.x
+
+# ip route --> display route table
+
+# traceroute
+# tracepath  access.redhat.com
+
+# ss  --> socket statistics
+
+# netstat -tulnp
+# ss -ta
+
+
+
+DESCRIBING NETWORKMANAGER CONCEPTS
+
+NetworkManager is a daemon that monitors and manages network settings.
+
+/etc/sysconfig/network-scripts
+
+VIEWING NETWORKING INFORMATION
+
+# nmcli dev status  --> status of all network devices
+# nmcli con show
+# nmcli con show --active
+
+#  nmcli con add con-name eno2 type ethernet ifname eno2
+
+# nmcli con add con-name eno2 type ethernet ifname eno2 ipv4.address 192.168.0.5/24 ipv4.gateway 192.168.0.254
+
+# nmcli con up static-ens3
+
+# nmcli dev dis ens3
+
+# /etc/sysconfig/network-scripts/ifcfg-*
+
+#  nmcli con del static-ens3
+
+# nmcli con reload
+
+#  nmcli con down "static-ens3"
+#  nmcli con up "static-ens3"
+
+
+CHANGING THE SYSTEM HOST NAME
+
+# /etc/hostname
+# hostnamectl set-hostname host@example.com
+# hostnamectl status
+# /etc/sysconfig/network
+
+#  /etc/nsswitch.conf
+# getent hosts hostname
+
+Testing DNS Name Resolution
+
+# host classroom.example.com
+# host 172.25.254.254
+
+
+====================================
+
+11/11/2024
+
+ARCHIVING AND TRANSFERRING FILES
+
+TAR Command:
+
+Archiving and compressing files are useful when creating backups and transferring data across a network.
+
+# tar -->  gather large sets of files into a single file (archive).
+The tar command can list the contents of archives or extract their files to the current system
+
+Options:
+-c , --create --> Crate New Archive
+-x, --extract   --> Extract from an existing acrchive
+-t, --list --> List the table of contents of an archive
+-v, --versbose --> verbose
+-f, --file    --> file name of archive to create
+-p, --preserve-permissions   --> preserve the permissions
+
+-z, --gzip  --> gzip compression
+-j, --bzip2  --> bzip2 compression
+-J, --xz   --> xz compression
+
+Ex:
+# tar -cf archive.tar  file1 file2 file3
+# tar --file=archive.tar --create file1 file2 file3
+# tar -cf /root/etc/tar  /etc
+
+# tar -tf /root/etc.tar
+
+# tar -xvf or tar -xpf
+
+
+
+TRANSFERRING FILES BETWEEN SYSTEMS SECURELY
+
+# scp /etc/yum.conf /etc/hosts  remoteuser@remotehost:/home/remoteuser
+
+# scp -rp root@remotehost:/var/log/  /tmp
+
+TRANSFERRING FILES USING THE SECURE FILE TRANSFER PROGRAM
+ # sftp remoteuser@remotehost
+
+# sftp remoteuser@remotehost
+remoteuser@remotehost's password: password
+Connected to remotehost.
+sftp> 
+sftp> mkdir hostbackup
+sftp> cd hostbackup
+sftp> put /etc/hosts
+Uploading /etc/hosts to /home/remoteuser/hostbackup/hosts
+/etc/hosts 100% 227 0.2KB/s 00:00
+sftp> 
+sftp> get /etc/yum.conf
+Fetching /etc/yum.conf to yum.conf
+/etc/yum.conf 100% 813 0.8KB/s 00:00
+sftp> exit
+
+# rsync & # rcp
+
+
+The rsync command is another way to securely copy files from one system to another. The tool
+uses an algorithm that minimizes the amount of data copied by synchronizing only the changed
+portions of files. It differs from scp in that if two files or directories are similar between two
+servers, rsync copies only the differences between the file systems, while scp would still copy
+everything.
+
+
+# rsync -av /var/log remotehost:/tmp
+# rsync -av remotehost:/var/log /tmp
+
+
+INSTALLING AND UPDATING SOFTWARE PACKAGES
+
+EXPLAINING AND INVESTIGATING RPM SOFTWARE PACKAGES
+
+SOFTWARE PACKAGES AND RPM
+
+RPM Package Manager (RPM )
+
+RPM package files names consist of four elements (plus the .rpm suffix):
+
+ name-version-release.architecture:
+
+Ex:
+
+coreutils-8.30-4.el8.x86_64-rpm
+ 
+Information about installed packages is stored in a local RPM database on each system.
+
+# rpm -qa 	-->  List all installed packages
+# rpm -qf FILENAME: Find out what package provides FILENAME
+# rpm -qf /etc/yum.repos.d
+
+rpm -q: List what version of the package is currently installed
+# rpm -q yum
+# rpm -qi: Get detailed information about the package
+# rpm -ql: List the files installed by the package
+# rpm -qc: List just the configuration files installed by the package
+# rpm -qd: List just the documentation files installed by the package
+#rpm -q --scripts: List shell scripts that run before or after the package is installed or removed
+# rpm -q --changelog NAME  --> Show a short summary of the reason for a new package release
+
+
+The low-level rpm command can be used to install packages, but it is not designed to work with
+package repositories or resolve dependencies from multiple sources automatically.
+
+
+MANAGING SOFTWARE PACKAGES WITH YUM
+The yum command allows you to install, update, remove, and get information about
+software packages and their dependencies. You can get a history of transactions performed and
+work with multiple Red Hat and third-party software repositories.
+
+# yum list
+# yum search httpd
+# yum info httpd
+# yum provides /var/www/html
+# yum install PACKAGENAME
+# yum update PACKAGENAME
+# yum remove PACKAGENAME
+# yum group list
+# yum group info
+# yum group install
+#  sudo yum group install "RPM Development Tools"
+#  /var/log/dnf.rpm.log.
+#  yum history
+# yum history undo 5
+
+# rpm -ivh 
+
+# rpm -ql yum
+
+
+
+==========================================================
+
+12/11/2024
+
+ACCESSING LINUX FILE SYSTEMS
+
+File Systems and Mount Points
+'File Systems, Storage, and Block Devices'
+
+Low-level access to storage devices in Linux is provided by a special type of file called a block device
+
+/dev directory
+
+ SATA/PATA,SAS, SCSI, or USB hard drive detected is called /dev/sda, the second is /dev/sdb,
+
+SATA/SAS/USB-attached storage /dev/sda, /dev/sdb ..
+
+virtio-blk paravirtualized storage (somevirtual machines)    /dev/vda, /dev/vdb ...
+
+NVMe-attached storage (many SSDs) /dev/nvme0, /dev/nvme1 ...
+
+SD/MMC/eMMC storage (SD cards) /dev/mmcblk0, /dev/mmcblk1 ...
+
+
+Disk Partitions:
+Logical Volumes
+
+/dev/mapper
+
+# df 
+# df -k , df -h, df -PTh
+
+# du -h /var/log
+
+MOUNTING FILE SYSTEMS MANUALLY
+ # mount
+
+. With the name of the device file in /dev containing the file system.
+• With the UUID written to the file system, a universally-unique identifier.
+
+Identifying the Block Device
+
+A hot-pluggable storage device, whether a hard disk drive (HDD) or solid-state device (SSD) in a
+server caddy, or a USB storage device, might be plugged into a different port each time they are
+attached to a system
+
+
+Use the lsblk command to list the details of a specified block device or all the available devices.
+
+# lsblk
+
+Mounting by Block Device Name
+
+# mount /dev/vdb1 /mnt/data
+lsblk -fp command lists the full path of the device, along with the UUIDs and mount points,
+
+# lsblk -fp
+
+# mount UUID="46f543fd-78c9-4526-a857-244811be2d88" /mnt/data
+
+/run/media/USERNAME/LABEL
+
+UNMOUNTING FILE SYSTEMS
+
+# umount /mnt/data
+
+# lsof /mnt/data
+
+
+LOCATING FILES ON THE SYSTEM
+
+	# locate
+      # find
+	
+# locate passwd
+# locate -i messages
+
+# find / -name sshd_config
+
+# find / -name '*.txt'
+# find /etc -name '*pass*'
+# find / -iname '*messages*'
+
+$ find -user user
+$ find -group user
+
+# find / -user root -group mail
+
+# find /home -perm 764
+
+$ find -size 10M
+$ find -size +10G
+
+# find / -mmin 120
+# find / -mmin +200
+
+# find / -mmin -150
+
+• f, for regular file
+• d, for directory
+• l, for soft link
+• b, for block device
+
+# find /etc -type d
+
+# find / -type l
+# find / -type f -links +1
+
+
+============================================================
+
+14/11/2024
+
+Shell Scripting
+
+Command Interpreter
+
+#!   -->sh-bang or she-bang
+
+#!/bin/bash
+
+Quoting Special Characters
+
+ the backslash (\), single quotes (''), or double quotes ("").
+
+The backslash escape character removes the special meaning of the single character immediately following it
+
+Ex: $ echo \# not a comment
+    $ echo '# not a comment #'
+    $ echo "***** hostname is ${var} *****"
+
+
+RUNNING COMMANDS MORE EFFICIENTLY USING LOOPS
+
+1. for loop
+2. if Condition
+
+ Iterate over lists using for loops.
+• Evaluate exit codes from commands and scripts.
+• Perform tests using operators.
+• Create conditional structures using if statements.
+
+Syntax:
+
+for VARIABLE in LIST; do
+COMMAND VARIABLE
+done
+
+ex:
+
+$ for HOST in host1 host2 host3; do echo $HOST; done
+
+# echo $?
+
+0 ---> success 
+1  ---> failed
+
+test command to evaluate shell script execution status
+
+ $ test 1 -gt 0 ; echo $?
+
+$ [ 1 -eq 1 ]; echo $?
+
+
+Using the if/then Construct
+
+if <CONDITION>; then
+ <STATEMENT>
+ ...
+ <STATEMENT>
+fi
+
+
+if <CONDITION>; then
+ <STATEMENT>
+ ...
+ <STATEMENT>
+ else
+ <STATEMENT>
+ ...
+ <STATEMENT>
+fi
+
+
+if <CONDITION>; then
+ <STATEMENT>
+ ...
+ <STATEMENT>
+ elif <CONDITION>; then
+ <STATEMENT>
+ ...
+ <STATEMENT>
+ else
+ <STATEMENT>
+ ...
+ <STATEMENT>
+ fi
+
+
+Regular Expressions
+-------------------
+
+. The period (.) matches any single character.
+? The preceding item is optional and will be matched at most once.
+* The preceding item will be matched zero or more times.
++ The preceding item will be matched one or more times.
+
+
+MATCHING REGULAR EXPRESSIONS WITH GREP
+
+$ grep '^computer' /usr/share/dict/words
+
+# ps aux | grep chrony
+
+
+-i  --> Use the regular expression provided but do not enforce case sensitivity (run case-insensitive).
+-v  --> Only display lines that do not contain matches to the regular expression.
+-r  --> Apply the search for data matching the regular expression recursively to a group of files or directories.
+-A  --> NUMBER Display NUMBER of lines after the regular expression match.
+-B  --> NUMBER Display NUMBER of lines before the regular expression match.
+-e  --> With multiple -e options used, multiple regular expressions can be supplied and will be used with a logical OR.
+
+
+$ grep -i serverroot /etc/httpd/conf/httpd.conf
+$ grep -v -i server /etc/hosts
+$ grep -v '^[#;]' /etc/ethertypes
+# cat /var/log/secure | grep -e 'pam_unix' -e 'user root' -e 'Accepted publickey' | less
+
+# grep -f /tmp/file1  /etc/passwd
+
+
+====================================================================
+
+15/11/2024
+
+SCHEDULING A DEFERRED USER JOB:
+-------------------------------
+
+Sometimes you might need to run a command, or set of commands, at a set point in the future
+
+These scheduled commands are often called tasks or jobs, and the term deferred indicates that
+these tasks or jobs are going to run in the future.
+
+One of the solutions available to Red Hat Enterprise Linux users for scheduling deferred tasks is at
+
+atd deamon
+
+# at 
+# atq
+# at -l
+# at -c JOBNUMBER
+# atrm JOBNUMBER
+
+the atd daemon is installed and enabled automatically
+
+The atd
+daemon provides 26 queues, a to z, with jobs in alphabetically later queues getting lower system
+priority (higher nice values, discussed in a later chapter).
+
+# at TIMESPEC
+# ctrl +D
+# at now +5min <myscript
+
+# at now +5min
+# at teatime tomorrow (teatime is 16:00)
+# at noon +4 days
+# at 5pm august 3 2021
+
+1.The unique job number for this job.
+2.The execution date and time for the scheduled job.
+3.Indicates that the job is scheduled with the default queue a. Different jobs may be scheduled with different queues.
+4.The owner of the job (and the user that the job will run as)
+
+
+SCHEDULING RECURRING USER JOBS:
+===============================
+
+
+Jobs scheduled to run repeatedly are called recurring jobs. 
+
+Red Hat Enterprise Linux systems ship with the crond daemon, provided by the cronie package, enabled and started by default
+specifically for recurring jobs.
+
+The crond daemon reads multiple configuration files: one per user (edited with the crontab command)
+
+If a scheduled command produces any output or error that is not redirected, the crond daemon
+attempts to email that output or error to the user who owns that job 
+ jobs for the current user.
+crontab -r Remove all jobs for the current user.
+crontab -e Edit jobs for the current user.
+crontab filename Remove all jobs, and replace with the jobs read from filename.
+If no file is specified, stdin is used.
+
+crontab -e command invokes
+# crontab
+# crontab -l
+# crontab -e
+# crontab <filename>
+# crontab -u <username> -l
+# crontab -u <username> -e
+
+
+crontab -l List the Vim by default,
+
+Fields in the crontab file appear in the following order:
+• Minutes
+• Hours
+• Day of month
+• Month
+• Day of week
+• Command
+
+
+*   *   *   *   *   user-name    Command
+
+1. Minute ( 0 - 59 )
+2. Hour   ( 0 - 23 )
+3. day of month  ( 1 - 31 )
+4. month  ( 1 - 12 ) or jan,feb,apr...
+5. day of week ( 0 - 6 ) ( Sunday=0 or 7 ) oR sun,mon,tue
+
+
+• * for “Do not Care”/always.
+• A number to specify a number of minutes or hours, a date, or a weekday. For weekdays, 0 equals
+Sunday, 1 equals Monday, 2 equals Tuesday, and so on. 7 also equals Sunday.
+• x-y for a range, x to y inclusive.
+• x,y for lists. Lists can include ranges as well, for example, 5,10-13,17 in the Minutes column
+to indicate that a job should run at 5, 10, 11, 12, 13, and 17 minutes past the hour.
+• */x to indicate an interval of x, for example, */7 in the Minutes column runs a job every seven
+minutes
+
+
+[root@ip-172-31-3-225 cron.d]# cat /etc/crontab
+SHELL=/bin/bash
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=root
+
+# For details see man 4 crontabs
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  * user-name  command to be executed
+
+[root@ip-172-31-3-225 cron.d]#
+
+
+# /etc/cron.d/
+# /etc/cron.deny
+# /etc/cron.allow
+
+# systemctl status crond
+# systemcrl status atd
+
+
+=====================================================================================
+
+18/11/2024
+
+INFLUENCING PROCESS SCHEDULING
+
+with nice & renice commands
+
+The NI column displays theprocess nice value and the PR column displays its scheduled priority. 
+In the top interface, the nice level maps to an internal system priority queue as displayed in the following graphic. 
+For example,a nice level of -20 maps to 0 in the PR column. A nice level of 19 maps to a priority of 39 in the PR column.
+
+Displaying Nice Levels from the Command Line
+
+$ ps axo pid,comm,nice,cls --sort=-nice
+$ sha1sum /dev/zero &
+$ ps -o pid,comm,nice 3480
+
+The nice command can be used by all users to start commands with a default or higher nice level.
+Without options, the nice command starts a process with the default nice value of 10.
+
+# nice sha1sum /dev/zero  &
+# ps -o pid,comm,nice 3517
+
+[user@host ~]$ nice -n 15 sha1sum &
+[1] 3521
+[user@host ~]$ ps -o pid,comm,nice 3521
+ PID COMMAND NI
+ 3521 sha1sum 15
+
+
+CHANGING THE NICE LEVEL OF AN EXISTING PROCESS
+
+$ renice -n 19 3521
+3521 (process ID) old priority 15, new priority 19
+
+The top command can also be used to change the nice level on a process. From within the top
+interactive interface, press the r option to access the renice command, followed by the PID to
+be changed and the new nice level
+
+
+===========================================================================
+
+19/11/2024
+
+
+CONTROLLING ACCESS TO FILES WITH ACLS
+-------------------------------------
+
+Standard Linux file permissions are satisfactory when files are used by only a single owner, and a
+single designated group of people.
+
+However, some use cases require that files are accessed with
+different file permission sets by multiple named users and groups. Access Control Lists (ACLs)
+provide this function.
+
+These additional users and groups, beyond the file owner and the file's group
+affiliation, are called named users and named groups respectively, because they are named not in a
+long listing, but rather within an ACL.
+
+With ACLs, you can grant permissions to multiple users and groups, identified by user name,
+group name, UID, or GID, using the same permission flags used with regular file permissions: read,
+write, and execute
+
+File-system ACL Support
+acl option enabled by default,in rhel8
+
+The plus sign (+) at the end of the 10-character permission string indicates that an extended ACL
+structure with entries exists on this file.
+
+user:
+Shows the user ACL settings, which are the same as the standard user file settings; rwx.
+group:
+Shows the current ACL mask settings, not the group owner settings; rw.
+other:
+Shows the other ACL settings, which are the same as the standard other file settings; no
+access
+
+# getfacl
+# setfacl
+
+$ setfacl -m u:name:rX file
+$ setfacl -m g:name:rw file
+$ setfacl -m o::- file
+
+$ setfacl -m u::rwx,g:consultants:rX,o::- file
+
+$ getfacl file-A | setfacl --set-file=- file-B
+
+
+Setting an Explicit ACL Mask
+$ setfacl -m m::r file
+
+Recursive ACL Modifications
+$ setfacl -R -m u:name:rX directory
+
+Deleting ACLs
+$ setfacl -x u:name,g:name file
+$ setfacl -b file
+
+CONTROLLING DEFAULT ACL FILE PERMISSIONS
+$ setfacl -m d:u:name:rx directory
+
+$ setfacl -x d:u:name directory
+$ setfacl -k directory. 	
+
+
+===================================
+
+MANAGING SELINUX SECURITY
+
+WHY USE SECURITY ENHANCED LINUX?
+
+SELinux enforces a set of access rules
+preventing a weakness in one application from affecting other applications or the underlying
+system. SELinux provides an extra layer of security; it also adds a layer of complexity which can
+be off-putting to people new to this subsystem
+
+SELinux has three modes:
+• Enforcing: SELinux is enforcing access control rules. Computers generally run in this mode.
+• Permissive: SELinux is active but instead of enforcing access control rules, it records warnings of
+rules that have been violated. This mode is used primarily for testing and troubleshooting.
+• Disabled: SELinux is turned off entirely: no SELinux violations are denied, nor even recorded. Discouraged!
+
+BASIC SELINUX SECURITY CONCEPTS:
+--------------------------------
+Security Enhanced Linux (SELinux) is an additional layer of system security.
+
+ ps, ls, cp, and mkdir all use the -Z option to display or set SELinux contexts
+# ls -Z /home
+# ls -Z /var/www
+# ps -ZC httpd
+# ps axZ
+
+CHANGING THE CURRENT SELINUX MODE
+
+# getenforce
+# setenforce
+
+# setenforce
+usage: setenforce [ Enforcing | Permissive | 1 | 0 ]
+
+# setenforce 0
+
+SELinux mode at boot time by passing a parameter to the kernel
+
+kernel argument of enforcing=0 or enforcing=1
+
+You can also disable SELinux completely by passing on the kernel parameter selinux=0. A value of selinux=1 enables SELinux
+
+Configuration file:
+ # /etc/selinux/config
+
+# grep '^SELINUX' /etc/selinux/config
+
+
+====================================================
+
+MANAGING BASIC STORAGE
+
+PARTITIONING A DISK
+MBR Partitioning Scheme  on systems running BIOS firmware
+
+MBR Primary Primary Primary Extended
+
+a maximum of four primary partitions. On Linux systems, with the use of extended and logical partitions, administrators can
+create a maximum of 15 partitions.partition size data is stored as 32-bit values
+
+As a result, the legacy MBR scheme is in the process of being
+superseded by the new GUID Partition Table (GPT) for disk partitioning.
+
+
+GPT Partitioning Scheme
+For systems running Unified Extensible Firmware Interface (UEFI) firmware, GPT is the standard for
+laying out partition tables on physical hard disks
+
+A GPT provides a maximum of 128 partitions.
+a GPT allocates 64 bits for logical block addresses.
+
+Primary-GPT vdb1 vdb2 vdb3 vdb4  unused backup-GPT
+
+MANAGING PARTITIONS WITH PARTED:
+-------------------------------
+The parted command takes the device name of the whole disk as the first argument and one or
+more subcommands.
+
+
+# parted /dev/vda print
+
+# parted /dev/vda
+# parted /dev/vda unit s print
+ s for sector
+• B for byte
+• MiB, GiB, or TiB (powers of 2)
+• MB, GB, or TB (powers of 10)
+
+As the root user, use the following command to write an MBR disk label to a disk.
+# parted /dev/vdb mklabel msdos
+
+To write a GPT disk label, use the following command.
+# parted /dev/vdb mklabel gpt
+
+# parted /dev/vdb help mkpart
+# udevadm settle  --> create the associated device file under the /dev directory. 
+
+As an alternative to the interactive mode, you can also create the partition as follows:
+# parted /dev/vdb mkpart primary xfs 2048s 1000MB
+
+CREATING FILE SYSTEMS
+# mkfs.xfs /dev/vdb1
+
+MOUNTING FILE SYSTEMS
+# mount /dev/vdb1 /mnt
+
+
+Persistently Mounting File Systems
+# cat /etc/fstab
+The first field specifies the device.
+The second field is the directory mount point
+The third field contains the file-system type, such as xfs or ext4.
+The fourth field is the comma-separated list of options to apply to the device. defaults
+The fifth field is used by the dump command to back up the device. Other backup applications do not usually use this field.
+The last field, the fsck order field, determines if the fsck command should be run at system boot to verify that the file systems are clean
+
+ For XFS file systems, set this field to 0 because XFS does not use fsck to check its
+file-system status. For ext4 file systems, set it to 1 for the root file system and 2 for the other ext4
+file systems
+
+UUID=a8063676-44dd-409a-b584-68be2c9f5570 / xfs defaults 0 0
+
+# systemctl daemon-reload
+
+Use the lsblk --fs command to scan the block devices connected to a machine
+and retrieve the file system UUIDs.
+
+# lsblk --fs
+
+============================================
+
+MANAGING SWAP SPACE:
+-------------------
+
+A swap space is an area of a disk under the control of the Linux kernel memory management subsystem.
+The kernel uses swap space to supplement the system RAM by holding inactive pages of memory.
+
+The combined system RAM plus swap space is called virtual memory
+
+Sizing the Swap Space:
+---------------------
+
+RAM                          SWAP SPACE                SWAP SPACE IF ALLOWING FOR HIBERNATION
+2 GiB or less                Twice the RAM             Three times the RAM
+Between 2 GiB and 8 GiB      Same as RAM               Twice the RAM
+Between 8 GiB and 64 GiB     At least 4 GiB            1.5 times the RAM
+More than 64 GiB             At least 4 GiB            Hibernation is not recommended
+
+Creating a Swap Partition
+-------------------------
+# parted /dev/vdb
+File system type? [ext2]? linux-swap
+
+# udevadm settle
+
+Formatting the Device
+# mkswap /dev/vdb2
+
+ACTIVATING A SWAP SPACE
+
+# swapon /dev/vdb2
+# free -g
+# free -m
+
+To De Activate Swap Space
+# swapoff  /dev/vdb2
+
+Activating Swap Space Persistently
+# /etc/fstab
+UUID=39e2667a-9458-42fe-9665-c5c854605881 swap swap defaults 0 0
+
+# systemctl daemon-reload
+
+Setting the Swap Space Priority:
+-------------------------------
+By default, the system uses swap spaces in series, meaning that the kernel uses the first activated
+swap space until it is full,
+
+To set the priority, use the pri option in /etc/fstab. The kernel uses the swap space with the
+highest priority first. The default priority is -2.
+
+Use swapon --show to display the swap space priorities
+
+# swapon --show
+
+
+===================================================================
+
+MANAGING LOGICAL VOLUMES
+
+Logical volumes and logical volume management make it easier to manage disk space. If a file
+system that hosts a logical volume needs more space, it can be allocated to its logical volume
+from the free space in its volume group and the file system can be resized. If a disk starts to fail,
+a replacement disk can be registered as a physical volume with the volume group and the logical
+volume's extents can be migrated to the new disk.
+
+LVM Definitions:
+----------------
+1.Physical devices
+2.Physical volumes (PVs)
+3.Volume groups (VGs)
+4.Logical volumes (LVs)
+
+Physical devices
+Physical devices are the storage devices used to save data stored in a logical volume
+
+Physical volumes (PVs)
+You must initialize a device as a physical volume before using it in an LVM system. LVM tools
+segment physical volumes into physical extents (PEs), which are small chunks of data that act
+as the smallest storage block on a physical volume
+
+Volume groups (VGs)
+Volume groups are storage pools made up of one or more physical volumes.
+
+Logical volumes (LVs)
+Logical volumes are created from free physical extents in a volume group and provide the
+"storage" device used by applications, users, and the operating system
+
+# lsblk
+# blkid
+# cat /proc/partitions
+
+Prepare the physical device.
+
+Use parted, gdisk, or fdisk to create a new partition for use with LVM. Always set the partition
+type to Linux LVM on LVM partitions; use 0x8e for MBR partitions. If necessary, use partprobe
+to register the new partition with the kernel.
+
+1. parted
+2. gdisk
+3. fdisk
+
+[root@host ~]# parted -s /dev/vdb mkpart primary 1MiB 769MiB
+[root@host ~]# parted -s /dev/vdb mkpart primary 770MiB 1026MiB
+[root@host ~]# parted -s /dev/vdb set 1 lvm on
+[root@host ~]# parted -s /dev/vdb set 2 lvm on
+
+Create a physical volume.
+# pvcreate /dev/vdb2 /dev/vdb1
+
+Create a volume group.
+# vgcreate vg01 /dev/vdb2 /dev/vdb1
+
+Create a logical volume.
+# lvcreate -n lv01 -L 700M vg01
+
+-l option, which expects sizes specified as a number of physical extents.
+
+• lvcreate -L 128M: Size the logical volume to exactly 128 MiB.
+
+• lvcreate -l 50 : Size the logical volume to exactly 128 extents. The total number of bytes  4
+depends on the size of the physical extent block on the underlying physical volume.
+
+Add the file system.
+Use mkfs to create an XFS file system on the new logical volume
+
+# mkfs -t xfs /dev/vg01/lv01
+
+• Use mkdir to create a mount point.
+# mkdir /mnt/data
+
+• Add an entry to the /etc/fstab file:
+
+/dev/vg01/lv01 /mnt/data xfs defaults 1 2
+
+
+# mount /mnt/data
+
+
+----------------------------------
+
+Removing a Logical Volume
+
+# umount /mnt/data
+then remove any /etc/fstab entries associated with this file system.
+
+# lvremove /dev/vg01/lv01
+# vgremove vg01
+# pvremove /dev/vdb2 /dev/vdb1
+
+
+-------------------------------
+
+REVIEWING LVM STATUS INFORMATIOS
+
+# pvdisplay /dev/vdb1
+# vgdisplay vg01
+# lvdisplay /dev/vg01/lv01
+
+------------------------------
+
+EXTENDING LOGICAL VOLUMES:
+
+• Extend a volume group (VG) using pvcreate and vgextend, and use vgdisplay to verify the results.
+• Reduce a VG using pvmove and vgreduce.
+• Extend a logical volume (LV) using lvextend.
+• Resize XFS file systems with xfs_growfs.
+• Resize ext4 file systems with resize2fs.
+
+You can remove unused physical volumes from a volume group. This is called reducing the volume
+group. First, use the pvmove command to move data from extents on one physical volume to
+extents on other physical volumes in the volume group. In this way, a new disk can be added to an
+existing volume group, data can be moved from an older or slower disk to a new disk, and the old
+disk removed from the volume group.
+
+# pvcreate /dev/vdb3
+# vgextend vg01 /dev/vdb3
+# vgdisplay vg01
+# pvmove /dev/vvdb3db3
+# vgreduce vg01 /dev/
+
+# lvextend -L +300M /dev/vg01/lv01
+
+Extending LVs Examples
+COMMAND        RESULTS
+lvextend -l    128 Resize the logical volume to exactly 128 extents in size.
+lvextend -l    +128 Add 128 extents to the current size of the logical volume.
+lvextend -L    128M Resize the logical volume to exactly 128 MiB.
+lvextend -L    +128M Add 128 MiB to the current size of the logical volume
+lvextend -l    +50%FREE Add 50 percent of the current free space in the VG to the LV. -r 
+
+
+Extend the file system:
+# xfs_growfs /mnt/data
+
+A common mistake is to run lvextend but to forget to run xfs_growfs. An
+alternative to running the two steps consecutively is to include the -r option with
+the lvextend command. This resizes the file system after the LV is extended, using
+fsadm(8). It works with a number of different file systems.
+
+# df -h /mountpoint.
+
+
+EXTENDING A LOGICAL VOLUME AND EXT4 FILE SYSTEM
+ # resize2fs /dev/vg01/lv01
+
+
+EXTEND A LOGICAL VOLUME AND SWAP SPACE:
+Deactivate the swap space
+# swapoff -v /dev/vgname/lvname
+# lvextend -l +extents /dev/vgname/lvname
+# mkswap /dev/vgname/lvname
+# swapon -va /dev/vgname/lvname
+
+
+
+============================================================
+
+25/11/2024
+
+MOUNTING NETWORK-ATTACHED STORAGE WITH NFS
+Mounting NFS Shares
+
+1.Identify: The administrator of the NFS client system can identify available NFS shares in
+various ways:
+
+The administrator for the NFS server may provide export details, including security
+requirements.
+
+2.Mount point: Use mkdir to create a mount point in a suitable location
+
+3. Mount:
+Mount temporarily: Mount the NFS share using the mount command:
+
+$ sudo mount -t nfs -o rw,sync serverb:/share mountpoint      hard,soft
+
+$ sudo vim /etc/fstab
+
+serverb:/share /mountpoint nfs rw,soft 0 0
+
+THE nfsconf TOOL
+----------------
+Red Hat Enterprise Linux 8 introduces the nfsconf tool to manage the NFS client and server
+configuration files under NFSv4 and NFSv3. Configure the nfsconf tool using /etc/nfs.conf
+
+/etc/sysconfig/nfs file from earlier versions of the operating system is deprecated now
+
+
+$ sudo cat /etc/nfs.conf
+
+$ nfsconf --set section key value 
+$ sudo nfsconf --set nfsd vers4.2 y
+
+$ sudo nfsconf --get nfsd vers4.2 y
+$ sudo nfsconf --unset nfsd vers4.2
+
+
+
+MOUNTING NFS SHARES WITH THE AUTOMOUNTER
+----------------------------------------
+The automounter is a service (autofs) that automatically mounts NFS shares "on-demand," and
+will automatically unmount NFS shares when they are no longer being used.
+
+Automounter Benefits
+• Users do not need to have root privileges to run the mount and umount commands.
+• NFS shares configured in the automounter are available to all users on the machine, subject to access permissions.
+• NFS shares are not permanently connected like entries in /etc/fstab, freeing network and system resources.
+• The automounter is configured on the client side; no server-side configuration is required.
+• The automounter uses the same options as the mount command, including security options.
+• The automounter supports both direct and indirect mount-point mapping, for flexibility in mount-point locations.
+• autofs creates and removes indirect mount points, eliminating manual management.
+• NFS is the default automounter network file system, but other network file systems can be automatically mounted.
+• autofs is a service that is managed like other system services.
+
+Create an automount
+-------------------
+$ sudo yum install autofs
+
+Add a master map file to /etc/auto.master.d. This file identifies the base directory used
+for mount points and identifies the mapping file used for creating the automounts.
+
+$ /etc/auto.master.d
+
+$ sudo vim /etc/auto.master.d/demo.autofs
+
+/shares  /etc/auto.demo
+
+This entry uses the /shares directory as the base for indirect automounts. The /etc/auto.demo file contains the mount details
+
+$ sudo vim /etc/auto.demo
+
+The mapping file-naming convention is /etc/auto.name, where name reflects the content of the map.
+
+work -rw,sync serverb:/shares/work
+
+
+Direct Maps
+
+/- /etc/auto.direct
+
+
+The content for the /etc/auto.direct file might appear as follows:
+/mnt/docs -rw,sync serverb:/shares/docs
+
+
+Indirect Wildcard Maps
+* -rw,sync serverb:/shares/&
+
+
+
+CONTROLLING THE BOOT PROCESS
+============================
+
+DESCRIBING THE RED HAT ENTERPRISE LINUX 8 BOOT PROCESS
+
+• The machine is powered on. The system firmware, either modern UEFI or older BIOS, runs a
+Power On Self Test (POST) and starts to initialize some of the hardware.
+
+Configured using the system BIOS or UEFI configuration screens that you typically reach by
+pressing a specific key combination, such as F2, early during the boot process.
+
+
+• The system firmware searches for a bootable device, either configured in the UEFI boot
+firmware or by searching for a Master Boot Record (MBR) on all disks, in the order configured in
+the BIOS.
+
+• The system firmware reads a boot loader from disk and then passes control of the system to
+the boot loader. On a Red Hat Enterprise Linux 8 system, the boot loader is the GRand Unified
+Bootloader version 2 (GRUB2).
+
+Configured using the grub2-install command, which installs GRUB2 as the boot loader on
+the disk.
+
+# grub2-install
+
+• GRUB2 loads its configuration from the /boot/grub2/grub.cfg file and displays a menu
+where you can select which kernel to boot
+
+# /boot/grub2/grub.cfg
+
+Configured using the /etc/grub.d/ directory, the /etc/default/grub file, and the grub2-
+mkconfig command to generate the /boot/grub2/grub.cfg file
+
+# /etc/grub.d
+# /etc/default/grub
+# /etc/grub2/grub.cfg
+
+• After you select a kernel, or the timeout expires, the boot loader loads the kernel and initramfs
+from disk and places them in memory. An initramfs is an archive containing the kernel
+modules for all the hardware required at boot, initialization scripts, and more. On Red Hat
+Enterprise Linux 8, the initramfs contains an entire usable system by itself.
+
+ 
+Configured using the /etc/dracut.conf.d/ directory, the dracut command, and the
+lsinitrd command to inspect the initramfs file.
+
+# /etc/dracut.conf.d
+# dracut 
+# lsinitrd
+
+• The boot loader hands control over to the kernel, passing in any options specified on the kernel
+command line in the boot loader, and the location of the initramfs in memory.
+
+
+• The kernel initializes all hardware for which it can find a driver in the initramfs, then executes
+/sbin/init from the initramfs as PID 1. On Red Hat Enterprise Linux 8, /sbin/init is a
+link to systemd.
+
+• The systemd instance from the initramfs executes all units for the initrd.target target.
+This includes mounting the root file system on disk on to the /sysroot directory.
+
+• The kernel switches (pivots) the root file system from initramfs to the root file system in /
+sysroot. systemd then re-executes itself using the copy of systemd installed on the disk.
+
+• systemd looks for a default target, either passed in from the kernel command line or configured
+on the system, then starts (and stops) units to comply with the configuration for that target,
+solving dependencies between units automatically. In essence, a systemd target is a set of units
+that the system should activate to reach the desired state. These targets typically start a textbased login or a graphical login screen.
+
+Configured using /etc/systemd/system/default.target and /etc/systemd/system/.
+
+REBOOTING AND SHUTTING DOWN
+---------------------------
+
+# systemctl poweroff 
+# systemctl reboot
+# poweroff
+# reboot
+
+
+Console --> access
+
+
+graphical.target
+multi-user.target
+rescue.target
+emergency.target 
+
+$ systemctl list-dependencies graphical.target | grep target
+
+
+Selecting a Target at Runtime
+-----------------------------
+
+# systemctl isolate multi-user.target
+
+$ systemctl cat graphical.target
+
+
+Setting a Default Target
+------------------------
+
+# systemctl get-default
+# systemctl set-default graphical.target
+
+
+=================================================================
+
+
+Changing Root password:
+
+1. Reboot the system.
+2. Interrupt the boot loader countdown by pressing any key, except Enter.
+3. Move the cursor to the kernel entry to boot.
+4. Press e to edit the selected entry.
+5. Move the cursor to the kernel command line (the line that starts with linux).
+6. Append rd.break. With that option, the system breaks just before the system hands control from the initramfs to the actual system.
+7. Press Ctrl+x to boot with the changes.
+
+# mount -o remount,rw /sysroot
+# chroot /sysroot
+
+# passwd root
+
+# touch /.autorelabel
+
+Type exit twice. The first command exits the chroot jail, and the second command exits the
+initramfs debug shell.
+
+
+
+
+=====================================================================
+
+26/11/2024
+
+IMPLEMENTING ADVANCED STORAGE FEATURES
+
+• Manage multiple storage layers using Stratis local storage management.
+• Optimize the use of storage space by using VDO to compress and deduplicate data on storage devices.
+
+Stratis runs as a service that manages pools of physical storage devices, and
+transparently creates and manages volumes for the file systems being created
+
+Stratis file systems do not have fixed sizes and no longer preallocate unused block space
+Although the file system is still built on a hidden LVM volume
+Stratis manages the underlying volume for you and can expand it when needed
+The space available to a file system is the amount of space still unused in the pooled devices on which it resides.
+
+Multiple file systems can reside in the same pool of disk devices, sharing the available space, but
+file systems can also reserve pool space to guarantee availability when needed.
+
+install the stratis-cli and stratisd packages.
+
+# yum install stratis-cli stratisd
+# systemctl enable --now stratisd
+# stratis pool create pool1 /dev/vdb
+# stratis pool list
+# stratis pool add-data pool1 /dev/vdc
+# stratis blockdev list pool1
+# stratis filesystem create pool1 filesystem1
+# stratis filesystem snapshot pool1 filesystem1 snapshot1
+# stratis filesystem list
+# lsblk --output=UUID /stratis/pool1/filesystem1
+fstab entries
+UUID=31b9...8c55 /dir1 xfs defaults,x-systemd.requires=stratisd.service 0 0
+
+
+COMPRESSING AND DEDUPLICATING STORAGE WITH VDO:
+-----------------------------------------------
+DESCRIBING VIRTUAL DATA OPTIMIZER
+
+Red Hat Enterprise Linux 8 includes the Virtual Data Optimizer (VDO) driver
+
+VDO is a Linux device mapper driver that reduces disk space usage on block devices, and minimizes the replication of data, saving disk space and even
+increasing data throughput
+
+VDO includes two kernel modules: 
+the kvdo module to transparently control data compression, and 
+the uds module for deduplication.
+
+The VDO layer is placed on top of an existing block storage device
+
+1. Zero-Block Elimination filters out data blocks that contain only zeroes (0) and records the
+information of those blocks only in the metadata.
+. The nonzero data blocks are then passed to the next phase of processing
+
+2. Deduplication eliminates redundant data blocks. When you create multiple copies of the
+same data, VDO detects the duplicate data blocks and updates the metadata to use those
+duplicate blocks as references to the original data block without creating redundant data
+blocks.
+The universal deduplication service (UDS) kernel module checks redundancy of the
+data through the metadata it maintains. This kernel module ships as part of the VDO.
+
+3. Compression is the last phase. The kvdo kernel module compresses the data blocks using
+LZ4 compression and groups them on 4 KB blocks.
+
+
+# yum install vdo kmod-kvdo
+# vdo create --name=vdo1 --device=/dev/vdd --vdoLogicalSize=50G
+
+# vdo status --name=vdo1
+# vdo list
+# vdo status --name=vdo1 | grep Deduplication
+# vdo status --name=vdo1 | grep Compression
+# mkfs.xfs -K /dev/mapper/vdo1
+# udevadm settle
+# mkdir /mnt/vdo1
+# mount /dev/mapper/vdo1 /mnt/vdo1
+
+# vdostats --human-readable
+
+
+===================================================
+
+INSTALLING RED HAT ENTERPRISE LINUX
+
+SELECTING INSTALLATION MEDIA
+
+• A binary DVD
+• A boot ISO
+• A QCOW2 image
+
+
+• A QCOW2 image containing a prebuilt system disk ready to deploy as a virtual machine in cloud
+or enterprise virtual environments. QCOW2 (QEMU Copy On Write) is the standard image format used by Red Hat.
+
+MANUAL INSTALLATION WITH ANACONDA
+Using the binary DVD or boot ISO, administrators can install a new RHEL system on a bare-metal
+server or a virtual machine. The Anaconda program supports two installation methods:
+
+
+• The manual installation interacts with the user to query how Anaconda should install and configure the system.
+
+• The automated installation uses a Kickstart file which tells Anaconda how to install the system. A
+later section discusses Kickstart installations in greater detail.
+
+
+• Keyboard -
+• Language Support -
+• Time & Date -
+• Installation Source -
+• Software Selection -
+• Installation Destination - 
+• KDUMP -
+• Network & Host Name -
+• SECURITY POLICY - 
+• System Purpose -
+
+click Begin Installation
+
+• Root Password -
+• User Creation - 
+
+
+Kikckstart  method
+• Explain Kickstart concepts and architecture.
+• Create a Kickstart file with the Kickstart Generator website.
+• Modify an existing Kickstart file with a text editor and check its syntax with ksvalidator.
+• Publish a Kickstart file to the installer.
+• Perform a network Kickstart installation.
+
+KICKSTART FILE COMMANDS
+Installation Commands
+
+• url
+• repo
+• text
+• vnc
+
+Partitioning Commands
+• clearpart:
+• part
+• autopart:
+• ignoredisk
+• bootloader
+• volgroup, logvol
+• zerombr
+
+Network Commands
+• network
+• firewall
+
+Location and Security Commands
+• lang
+• keyboard
+• timezone:
+• authselect:
+• rootpw:
+• selinux
+• services
+• group, user
+
+Miscellaneous Commands
+• logging:
+• firstboot
+• reboot, poweroff, halt
+
+%pre and %post,
+
+%pre, %post, and %packages
+
+KICKSTART INSTALLATION STEPS
+To successfully automate installation of Red Hat Enterprise Linux, follow these steps:
+1. Create a Kickstart file.
+2. Publish the Kickstart file to the installer.
+3. Boot Anaconda and point it to the Kickstart file.
+
+CREATING A KICKSTART FILE
+Use either of these methods to create a Kickstart file:
+• Use the Kickstart Generator website.
+• Use a text editor
+
+The Kickstart Generator website at https://access.redhat.com/labs/kickstartconfig/
+
+ Every installation creates a /root/anaconda-ks.cfg
+
+# /root/anaconda-ks.cfg
+
+$ ksvalidator /tmp/anaconda-ks.cfg
+
+
+PUBLISH THE KICKSTART FILE TO ANACONDA
+Make the Kickstart file available to the installer by placing it in one of these locations:
+• A network server available at install time using FTP, HTTP, or NFS.
+• An available USB disk or CD-ROM.
+• A local hard disk on the system to be installed.
+
+
+Once a Kickstart method is chosen, the installer is told where to locate the Kickstart file by passing
+the inst.ks=LOCATION parameter to the installation kernel. Some examples:
+• inst.ks=http://server/dir/file
+• inst.ks=ftp://server/dir/file
+• inst.ks=nfs:server:/dir/file
+• inst.ks=hd:device:/dir/file
+• inst.ks=cdrom:device
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
